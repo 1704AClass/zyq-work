@@ -9,8 +9,10 @@
         <module>../nm-framework-utils</module>
         <module>../nm-service-api</module>
         <module>../nm-service-manage-cms</module>
-        <module>../test-rabbitmq-producer</module>
-        <module>../test-rabbitmq-consumer</module>
+        <module>../nm-service-manage-cms-client</module>
+        <module>../nm-service-manage-course</module>
+        <module>../nm-service-base-filesystem</module>
+        <module>../nm-govern-center</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
