@@ -7,9 +7,9 @@ import com.ningmeng.framework.domain.media.response.MediaCode;
 import com.ningmeng.framework.exception.CustomExceptionCast;
 import com.ningmeng.framework.model.response.CommonCode;
 import com.ningmeng.framework.model.response.ResponseResult;
-import com.ningmeng.manage_media.config.RabbitMQConfig;
 import com.ningmeng.manage_media.controller.MediaUploadController;
 import com.ningmeng.manage_media.dao.MediaFileRepository;
+import com.ningmeng.manage_media_process.config.RabbitMQConfig;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,36 +38,10 @@ public class MediaUploadService {
     //上传文件根目录
     @Value("${nm-service-manage-media.upload-location}")
     String uploadPath;
-
+    @Value("${nm-service-manage-media.mq.routingkey-media-video}")
+    String routingkey_media_video;
     @Autowired
     private RabbitTemplate rabbitTemplate;
-
-    @Value("${nm-service-manage-media.mq.routingkey-media-video}")
-    private String routingkey_media_video;
-
-    //向MQ发送视频处理消息
-    public ResponseResult sendProcessVideoMsg(String mediaId){
-        Optional<MediaFile> optional = mediaFileRepository.findById(mediaId);
-        if(!optional.isPresent()){
-            return new ResponseResult(CommonCode.FAIL);
-        }
-        MediaFile mediaFile = optional.get();
-        //发送视频处理消息
-        Map<String,String> msgMap = new HashMap<>();
-        msgMap.put("mediaId",mediaId);
-        //发送的消息
-        String msg = JSON.toJSONString(msgMap);
-        try {
-            this.rabbitTemplate.convertAndSend(RabbitMQConfig.EX_MEDIA_PROCESSTASK,routingkey_media_video, msg);
-            LOGGER.info("send media process task msg:{}",msg);
-        }catch (Exception e){
-            e.printStackTrace();
-            LOGGER.info("send media process task error,msg is:{},error:{}",msg,e.getMessage());
-            return new ResponseResult(CommonCode.FAIL);
-        }
-        return new ResponseResult(CommonCode.SUCCESS);
-    }
-
     /**
      * 根据文件md5得到文件路径
      * 规则：
@@ -127,7 +101,7 @@ public class MediaUploadService {
         boolean fileFold = createFileFold(fileMd5);
         if(!fileFold){
         //上传文件目录创建失败
-            CustomExceptionCast.cast(MediaCode.UPLOAD_FILE_REGISTER_errot);
+            CustomExceptionCast.cast(MediaCode.UPLOAD_FILE_REGISTER_FAIL);
         }
         return new ResponseResult(CommonCode.SUCCESS);
     }
@@ -155,7 +129,7 @@ public class MediaUploadService {
     //块文件上传
     public ResponseResult uploadchunk(MultipartFile file, String fileMd5, Integer chunk) {
         if(file == null){
-            CustomExceptionCast.cast(MediaCode.UPLOAD_FILE_NONENTITY);
+            CustomExceptionCast.cast(MediaCode.CHUNK_FILE_EXIST_CHECK);
         }
         //创建块文件目录
         boolean fileFold = createChunkFileFolder(fileMd5);
@@ -199,7 +173,18 @@ public class MediaUploadService {
         }
         return true;
     }
-
+    //向MQ发送视频处理消息
+    public boolean sendProcessVideoMsg(String fileMd5){
+        try {
+            HashMap map = new HashMap();
+            map.put("mediaId",fileMd5);
+            String msg= JSON.toJSONString(map);
+            rabbitTemplate.convertAndSend(RabbitMQConfig.EX_MEDIA_PROCESSTASK,routingkey_media_video, msg);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
     //合并块文件
     public ResponseResult mergechunks(String fileMd5, String fileName, Long fileSize, String mimetype, String fileExt) {
         //获取块文件的路径
@@ -223,7 +208,7 @@ public class MediaUploadService {
             LOGGER.error("mergechunks..create mergeFile fail:{}",e.getMessage());
         }
         if(!newFile){
-            CustomExceptionCast.cast(MediaCode.UPLOAD_FILE_NONENTITY);
+            CustomExceptionCast.cast(MediaCode.UPLOAD_FILE_REGISTER_EXIST);
         }
         //获取块文件，此列表是已经排好序的列表
         List<File> chunkFiles = getChunkFiles(chunkfileFolder);
@@ -250,8 +235,10 @@ public class MediaUploadService {
         mediaFile.setFileType(fileExt);//状态为上传成功
         mediaFile.setFileStatus("301002");
         MediaFile save = mediaFileRepository.save(mediaFile);
-        //发送视频处理编码
-        sendProcessVideoMsg(fileMd5);
+        boolean flag=sendProcessVideoMsg(fileMd5);
+        if(!flag){
+            CustomExceptionCast.cast(MediaCode.MERGE_FILE_CHECKFAIL);
+        }
         return new ResponseResult(CommonCode.SUCCESS);
     }
 

@@ -5,25 +5,23 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * Created by wangb on 2020/2/11.
- * 使用页面查询时候自己封装的类
- * 条件查询只需要传递 一个查询对象就行了。
+ * Created by 12699 on 2020/2/11.
  */
 @Data
-public class QueryPageRequest extends RequestData{
+public class QueryPageRequest extends RequestData {
     //站点id
     @ApiModelProperty("站点id")
     private String siteId;
-    //页面id
+    // 页面ID
     @ApiModelProperty("页面ID")
     private String pageId;
-    //页面名称
+    // 页面名称
     @ApiModelProperty("页面名称")
     private String pageName;
-    //别名
-    @ApiModelProperty("别名")
+    // 页面别名
+    @ApiModelProperty("页面别名")
     private String pageAliase;
-    //模板Id
-    @ApiModelProperty("模板ID")
+    // 模版id
+    @ApiModelProperty("模版id")
     private String templateId;
 }

@@ -30,5 +30,4 @@ public class Teachplan implements Serializable {
     private Double timelength;
     private String trylearn;
 
-
 }

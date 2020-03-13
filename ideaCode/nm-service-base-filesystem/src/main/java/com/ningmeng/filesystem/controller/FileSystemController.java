@@ -11,24 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * Created by 86181 on 2020/2/21.
+ * Created by 12699 on 2020/2/21.
  */
 @RestController
 @RequestMapping("/filesystem")
-public class FileSystemController implements FileSystemControllerApi {
-
+public class FileSystemController  implements FileSystemControllerApi {
     @Autowired
     FileSystemService fileSystemService;
-
     @Override
     @PostMapping("/upload")
-    public UploadFileResult upload(@RequestParam("file") MultipartFile file,
-                                   @RequestParam(value = "filetag", required = true) String
-                                           filetag,
-                                   @RequestParam(value = "businesskey", required = false) String
-                                           businesskey,
-                                   @RequestParam(value = "metedata", required = false) String
-                                           metadata) {
-        return fileSystemService.upload(file,filetag,businesskey,metadata);
+    public UploadFileResult upload(@RequestParam("multipartFile")MultipartFile multipartFile, @RequestParam(value = "filetag", required = true)String filetag, @RequestParam(value = "businesskey", required = false)String businesskey, @RequestParam(value = "metedata", required = false)String metadata) {
+        return fileSystemService.upload(multipartFile,filetag,businesskey,metadata);
     }
 }

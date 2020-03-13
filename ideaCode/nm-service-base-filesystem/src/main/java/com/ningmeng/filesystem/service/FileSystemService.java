@@ -19,32 +19,22 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
 
 /**
- * Created by 86181 on 2020/2/21.
+ * Created by 12699 on 2020/2/21.
  */
 @Service
 public class FileSystemService {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemService.class);
-
-    /**
-     * 加载信息
-     */
-    @Value("${ningmeng.fastdfs.connect_timeout_in_seconds}")
-    private int connect_timeout_in_seconds;
-    @Value("${ningmeng.fastdfs.network_timeout_in_seconds}")
-    private int network_timeout_in_seconds;
     @Value("${ningmeng.fastdfs.tracker_servers}")
-    private String tracker_servers;
+    String tracker_servers;
+    @Value("${ningmeng.fastdfs.connect_timeout_in_seconds}")
+    int connect_timeout_in_seconds;
+    @Value("${ningmeng.fastdfs.network_timeout_in_seconds}")
+    int network_timeout_in_seconds;
     @Value("${ningmeng.fastdfs.charset}")
-    private String charset;
-
+    String charset;
     @Autowired
-    private FileSystemRepository fileSystemRepository;
-
-
-    /**
-     * 初始化FastDFS信息
-     */
+    FileSystemRepository fileSystemRepository;
+    //加载fdfs的配置
     private void initFdfsConfig(){
         try {
             ClientGlobal.initByTrackers(tracker_servers);
@@ -53,61 +43,44 @@ public class FileSystemService {
             ClientGlobal.setG_charset(charset);
         } catch (Exception e) {
             e.printStackTrace();
+            //初始化文件系统出错
+            CustomExceptionCast.cast(FileSystemCode.FS_UPLOADFILE_FILEISNULL);
         }
     }
-
-
-
-    /**
-     * 上传文件
-     * @param file
-     * @param filetag
-     * @param businesskey
-     * @param metadata
-     * @return
-     */
-    public UploadFileResult upload(MultipartFile file, String filetag, String businesskey, String metadata) {
-
-        System.out.println(file);
-        System.out.println(filetag);
-        System.out.println(businesskey);
-        System.out.println(metadata);
+    //上传文件
+    public UploadFileResult upload(MultipartFile file,String filetag, String businesskey, String metadata){
         if(file == null){
             CustomExceptionCast.cast(FileSystemCode.FS_UPLOADFILE_FILEISNULL);
         }
-//上传文件到
+        //上传文件到fdfs
         String fileId = fdfs_upload(file);
-//创建文件信息对象
+        //创建文件信息对象
         FileSystem fileSystem = new FileSystem();
-//文件id
+        //文件id
         fileSystem.setFileId(fileId);
-//文件在文件系统中的路径
+        //文件在文件系统中的路径
         fileSystem.setFilePath(fileId);
-//业务标识
+        //业务标识
         fileSystem.setBusinesskey(businesskey);
-//标签
+        //标签
         fileSystem.setFiletag(filetag);
-//元数据
+        //元数据
         if(StringUtils.isNotEmpty(metadata)){
-            try {
-                Map map = JSON.parseObject(metadata, Map.class);
+            try {Map map = JSON.parseObject(metadata, Map.class);
                 fileSystem.setMetadata(map);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } //名称
+        }
+        //名称
         fileSystem.setFileName(file.getOriginalFilename());
-//大小
+        //大小
         fileSystem.setFileSize(file.getSize());
-//文件类型
+        //文件类型
         fileSystem.setFileType(file.getContentType());
         fileSystemRepository.save(fileSystem);
         return new UploadFileResult(CommonCode.SUCCESS,fileSystem);
     }
-
-    /**
-     * 上传文件到FastDFS
-     */
     //上传文件到fdfs，返回文件id
     public String fdfs_upload(MultipartFile file) {
         try {
@@ -122,7 +95,7 @@ public class FileSystemService {
             //创建storage client
             StorageClient1 storageClient1 = new StorageClient1(trackerServer,storeStorage);
             //上传文件
-            //文件字节
+            // 文件字节
             byte[] bytes = file.getBytes();
             //文件原始名称
             String originalFilename = file.getOriginalFilename();
@@ -133,7 +106,7 @@ public class FileSystemService {
             return file1;
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        return null;
+        }return null;
     }
+
 }

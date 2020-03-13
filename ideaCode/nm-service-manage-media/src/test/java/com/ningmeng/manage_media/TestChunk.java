@@ -15,9 +15,9 @@ public class TestChunk {
     //测试文件分块方法
     @Test
     public void testChunk() throws IOException {
-        File sourceFile = new File("D:\\ffmpeg\\video\\haicaowu.mp4");
+        File sourceFile = new File("X:\\ffmpeg\\video\\haicaowu.mp4");
         // File sourceFile = new File("d:/logo.png");
-        String chunkPath = "D:\\ffmpeg\\video\\chunk\\";
+        String chunkPath = "X:\\ffmpeg\\video\\chunk\\";
         File chunkFolder = new File(chunkPath);
         if(!chunkFolder.exists()){
             chunkFolder.mkdirs();
@@ -59,9 +59,9 @@ public class TestChunk {
     @Test
     public void testMerge() throws IOException {
         //块文件目录
-        File chunkFolder = new File("D:\\ffmpeg\\video\\chunk\\");
+        File chunkFolder = new File("X:\\ffmpeg\\video\\chunk\\");
         //合并文件
-        File mergeFile = new File("D:\\ffmpeg\\video\\haicaowu.mp4");
+        File mergeFile = new File("X:\\ffmpeg\\video\\haicaowu.mp4");
         if(mergeFile.exists()){
             mergeFile.delete();
         } 

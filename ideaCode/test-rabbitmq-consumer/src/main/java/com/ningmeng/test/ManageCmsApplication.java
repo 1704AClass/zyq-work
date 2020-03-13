@@ -12,7 +12,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = {"com.ningmeng.test"})
 @ComponentScan(basePackages = {"com.ningmeng.framework"})
 public class ManageCmsApplication {
-    public static void main(String[]args){
+    public static void main(String[] args){
         SpringApplication.run(ManageCmsApplication.class,args);
     }
 }

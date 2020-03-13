@@ -26,8 +26,8 @@ public class Swagger2Configuration {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("柠檬网api文档111")
-                .description("柠檬网api文档1111")
+                .title("柠檬网api文档")
+                .description("柠檬网api文档")
 //                .termsOfServiceUrl("/")
                 .version("1.0")
                 .build();

@@ -4,7 +4,7 @@ import com.ningmeng.framework.domain.course.ext.TeachplanNode;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * Created by wangb on 2020/2/18.
+ * Created by 12699 on 2020/2/19.
  */
 @Mapper
 public interface TeachplanMapper {

@@ -3,7 +3,7 @@ package com.ningmeng.framework.exception;
 import com.ningmeng.framework.model.response.ResultCode;
 
 /**
- * Created by wangb on 2020/2/13.
+ * Created by 12699 on 2020/2/12.
  */
 public class CustomExceptionCast {
     //使用此静态方法抛出自定义异常
