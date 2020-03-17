@@ -4,6 +4,7 @@ import com.ningmeng.api.courseapi.CourseControllerApi;
 import com.ningmeng.framework.domain.course.*;
 import com.ningmeng.framework.domain.course.ext.CourseView;
 import com.ningmeng.framework.domain.course.ext.TeachplanNode;
+import com.ningmeng.framework.domain.course.request.CourseListRequest;
 import com.ningmeng.framework.domain.course.response.AddCourseResult;
 import com.ningmeng.framework.domain.course.response.CoursePublishResult;
 import com.ningmeng.framework.model.response.CommonCode;
@@ -43,8 +44,8 @@ public class CourseController  implements CourseControllerApi {
     @Override
     @PreAuthorize("hasAuthority('course_find_list')")
     @GetMapping("/course/findCourseList/{page}/{size}")
-    public QueryResponseResult findCourseList(@PathVariable("page") int page, @PathVariable("size") int size, String companyId) {
-        return courseService.findCourseListPage(page,size,companyId);
+    public QueryResponseResult findCourseList(@PathVariable("page") int page, @PathVariable("size") int size, CourseListRequest courseListRequest) {
+        return courseService.findCourseListPage(page,size,courseListRequest);
     }
 
     @Override

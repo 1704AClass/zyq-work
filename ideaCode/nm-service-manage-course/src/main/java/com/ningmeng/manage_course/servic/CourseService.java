@@ -9,6 +9,7 @@ import com.ningmeng.framework.domain.course.*;
 import com.ningmeng.framework.domain.course.ext.CourseInfo;
 import com.ningmeng.framework.domain.course.ext.CourseView;
 import com.ningmeng.framework.domain.course.ext.TeachplanNode;
+import com.ningmeng.framework.domain.course.request.CourseListRequest;
 import com.ningmeng.framework.domain.course.response.AddCourseResult;
 import com.ningmeng.framework.domain.course.response.CourseCode;
 import com.ningmeng.framework.domain.course.response.CoursePublishResult;
@@ -213,7 +214,8 @@ public class CourseService {
 
 
     @Transactional
-    public QueryResponseResult findCourseListPage(int page,int pageSize,String companyId){
+    public QueryResponseResult findCourseListPage(int page,int pageSize,CourseListRequest courseListRequest){
+        String companyId = courseListRequest.getCompanyId();
         if(companyId==null||"".equals(companyId)){
             CustomExceptionCast.cast(CommonCode.FAIL);
         }
