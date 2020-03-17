@@ -8,8 +8,12 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
+
     //添加选课任务交换机
     public static final String EX_LEARNING_ADDCHOOSECOURSE = "ex_learning_addchoosecourse";
+
+    //添加选课消息队列
+    public static final String NM_LEARNING_ADDCHOOSECOURSE = "nm_learning_addchoosecourse";
 
     //完成添加选课消息队列
     public static final String NM_LEARNING_FINISHADDCHOOSECOURSE = "nm_learning_finishaddchoosecourse";
@@ -33,6 +37,14 @@ public class RabbitMQConfig {
         Queue queue = new Queue(NM_LEARNING_FINISHADDCHOOSECOURSE,true,false,true);
         return queue;
     }
+
+    //声明队列
+    @Bean(NM_LEARNING_ADDCHOOSECOURSE)
+    public Queue QUEUE_NM_LEARNING_ADDCHOOSECOURSE() {
+        Queue queue = new Queue(NM_LEARNING_ADDCHOOSECOURSE);
+        return queue;
+    }
+
     /**
      * 绑定队列到交换机 .
      * @param queue    the queue
@@ -42,6 +54,16 @@ public class RabbitMQConfig {
     @Bean
     public Binding binding_queue_media_processtask(@Qualifier("nm_learning_finishaddchoosecourse") Queue queue, @Qualifier(EX_LEARNING_ADDCHOOSECOURSE) Exchange exchange) {
         return BindingBuilder.bind(queue).to(exchange).with(NM_LEARNING_FINISHADDCHOOSECOURSE_KEY).noargs();
+    }
+
+    @Bean
+    public Binding
+    BINDING_QUEUE_FINISHADDCHOOSECOURSE(@Qualifier(NM_LEARNING_FINISHADDCHOOSECOURSE) Queue queue, @Qualifier(EX_LEARNING_ADDCHOOSECOURSE) Exchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(NM_LEARNING_FINISHADDCHOOSECOURSE_KEY).noargs();
+    }
+    @Bean
+    public Binding BINDING_QUEUE_ADDCHOOSECOURSE(@Qualifier(NM_LEARNING_ADDCHOOSECOURSE) Queue queue, @Qualifier(EX_LEARNING_ADDCHOOSECOURSE) Exchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(NM_LEARNING_ADDCHOOSECOURSE_KEY).noargs();
     }
 
 }

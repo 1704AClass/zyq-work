@@ -228,5 +228,7 @@
     <orderEntry type="library" name="Maven: io.netty:netty-handler-proxy:4.1.23.Final" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty-codec-socks:4.1.23.Final" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.retry:spring-retry:1.2.2.RELEASE" level="project" />
+    <orderEntry type="module" module-name="nm-service-manage-order" />
+    <orderEntry type="library" name="Maven: com.github.wxpay:wxpay-sdk:0.0.3" level="project" />
   </component>
 </module>
